@@ -1,0 +1,51 @@
+/* Change main calendar background */
+.react-calendar {
+  background-color: rgba(26, 24, 24, 1); /* AliceBlue */
+  /* border: 1px solid #ccc;
+  border-radius: 10px; */
+  border:none;
+  padding: 10px;
+}
+
+/* Change the header/navigation background */
+.react-calendar__navigation {
+  background-color: #b92f7bff; /* Green */
+  font-weight: bold;
+}
+
+/* Change individual day tiles */
+.react-calendar__tile {
+  background-color: rgba(26, 24, 24, 1); /* White by default */
+  color: white;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+/* Hover effect for days */
+.react-calendar__tile:hover {
+  color: black
+}
+
+/* Selected day */
+.react-calendar__tile--active {
+  background-color: #b92f7bff !important; /* Green */
+  color: white;
+}
+
+.react-calendar__month-view__weekdays{
+    color: white;
+}
+
+.react-calendar__tile--now{
+    background-color: yellow;
+    color: black;
+}
+
+.react-calendar__tile:focus {
+  color: black;
+}
+
+.highlight {
+  background-color: #b92f7bff !important;
+  color: white !important;
+}

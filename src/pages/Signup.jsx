@@ -4,10 +4,11 @@ import { useState } from "react";
 import swal from "sweetalert";
 import { addUserAPI } from "../services/allAPIcall";
 import { getUserEmailAPI } from "../services/allAPIcall";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Signup() {
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -19,12 +20,16 @@ function Signup() {
   //api call
   const addUser = async () => {
     try {
+      setLoading(true);
       const result = await addUserAPI(input);
       console.log(result);
+      setLoading(false);
       swal("Success", "Registration successful!", "success");
+
       navigate("/login");
     } catch (error) {
       console.log(error);
+      setLoading(false);
       swal("Error", "Something went wrong. Please try again.", "error");
     }
   };
@@ -241,6 +246,28 @@ function Signup() {
           </div>
         </div>
       </div>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <CircularProgress
+            style={{ color: "#b92f7bff" }}
+            size={60}
+            thickness={3}
+          />
+        </div>
+      )}
       <Footer />
     </>
   );

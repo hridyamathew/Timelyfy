@@ -7,7 +7,8 @@ import { useRef } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { editEventAPI } from "../services/allAPIcall";
-import noevent from'../assets/images/noevent.png'
+import noevent from "../assets/images/noevent.png";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const style = {
   position: "absolute",
@@ -25,20 +26,25 @@ function Events({ id, eventAdded, setEventDates }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [events, setEvents] = useState([]);
   const [editInput, setEditInput] = useState({});
+  const [loading, setLoading] = useState(false);
   console.log(editInput);
   console.log(events);
-  
 
   const getEvents = async () => {
     try {
+      setLoading(true);
       const result = await getEventAPI(id);
       console.log(result);
-      const sortedEvents = result.data.sort((a,b)=>new Date(a.date) - new Date(b.date))
+      const sortedEvents = result.data.sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
       setEvents(sortedEvents);
-      const dates = result.data.map(event=>event.date)
-      setEventDates(dates)
+      const dates = result.data.map((event) => event.date);
+      setEventDates(dates);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -53,10 +59,13 @@ function Events({ id, eventAdded, setEventDates }) {
 
   const deleteEvent = async (id) => {
     try {
+      setLoading(true)
       const result = await deleteEventAPI(id);
+      setLoading(false)
       getEvents();
       console.log(result);
     } catch (error) {
+      setLoading(false)
       console.log(error);
     }
   };
@@ -95,11 +104,14 @@ function Events({ id, eventAdded, setEventDates }) {
         eventTitle: editInput.eventTitle,
         userId: editInput.userId,
       };
+      setLoading(true)
       const result = await editEventAPI(editInput.id, event);
+      setLoading(false)
       console.log(result);
       getEvents();
-      handleClose()
+      handleClose();
     } catch (error) {
+      setLoading(false)
       console.log(error);
     }
   };
@@ -147,7 +159,7 @@ function Events({ id, eventAdded, setEventDates }) {
           ))
         ) : (
           <div className="d-flex flex-column align-items-center">
-            <img src={noevent} alt="" width={'70%'} />
+            <img src={noevent} alt="" width={"70%"} />
             <h4 className="mt-4">NO EVENTS</h4>
             <h6>You have no upcoming events. Why not add one?</h6>
             <h6>Select date and add event.</h6>
@@ -203,6 +215,28 @@ function Events({ id, eventAdded, setEventDates }) {
           </Box>
         </Modal>
       </div>
+      {loading && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  style={{ color: "#b92f7bff" }}
+                  size={60}
+                  thickness={3}
+                />
+              </div>
+            )}
     </>
   );
 }

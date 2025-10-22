@@ -3,66 +3,60 @@ import Footer from "../components/Footer";
 import { useState } from "react";
 import { getUserEmailAPI } from "../services/allAPIcall";
 import swal from "sweetalert";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Login() {
- const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
 
-  const [loading, setLoading] = useState(false)
-
+  const [loading, setLoading] = useState(false);
 
   console.log(input);
 
   const handleSubmit = async () => {
     try {
       if (input.email && input.password) {
+        setLoading(true);
         const result = await getUserEmailAPI(input.email);
         console.log(result);
-        if(result.status == "Pending"){
-          setLoading(true)
-        }
-        else {
-          setLoading(false)
-        }
-        
         if (result.data.length > 0) {
-          let user = result.data[0]
+          let user = result.data[0];
           if (input.password == user.password) {
-            sessionStorage.setItem("user", JSON.stringify(user))
-            navigate('/home')
-            
+            setLoading(false);
+            sessionStorage.setItem("user", JSON.stringify(user));
+            navigate("/home");
           } else {
             swal("Error", "Invalid password", "error");
+            setLoading(false);
           }
         } else {
           swal("Error", "Invalid email or password", "error");
+          setLoading(false);
         }
       } else {
         swal("Error", "Please enter email and password", "error");
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
       swal("Error", "Something went wrong. Please try again.", "error");
+      setLoading(false);
     }
   };
 
   return (
     <>
-      {
-        loading &&
-        <CircularProgress />
-      }
       <div
         style={{
           backgroundImage: `url(https://sinoelite.com.sg/wp-content/uploads/2024/11/iStock-1821915184-1.jpg)`,
           height: "100vh",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          position: "relative",
         }}
       >
         <div
@@ -161,6 +155,29 @@ function Login() {
           </div>
         </div>
       </div>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <CircularProgress
+            style={{ color: "#b92f7bff" }}
+            size={60}
+            thickness={3}
+          />
+        </div>
+      )}
+
       <Footer />
     </>
   );

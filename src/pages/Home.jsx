@@ -8,6 +8,7 @@ import Modal from "@mui/material/Modal";
 import { addEventAPI } from "../services/allAPIcall";
 import { getEventAPI } from "../services/allAPIcall";
 import swal from "sweetalert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const style = {
   position: "absolute",
@@ -29,6 +30,7 @@ function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [eventAdded, setEventAdded] = useState(false);
   const [eventDates, setEventDates] = useState([]);
+  const [loading, setLoading] = useState(false);
   console.log(eventDates);
   const [event, setEvent] = useState({
     date: "",
@@ -84,6 +86,7 @@ function Home() {
   // add event
   const addEvent = async () => {
     try {
+      setLoading(true)
       const result = await getEventAPI(event.userId);
       const eventAvailable = result.data.some(
         (e) =>
@@ -91,19 +94,23 @@ function Home() {
           e.time.toLowerCase() == event.time.toLowerCase()
       );
       if (eventAvailable) {
+        setLoading(false)
         swal(
           "",
           `You already have an event on ${event.date} at ${event.time}. Change the time.`,
           ""
         );
       } else {
+        setLoading(true)
         const result = await addEventAPI(event);
         console.log(result);
+        setLoading(false)
         setTimeout(() => handleClose(), 300);
         setEventAdded(!eventAdded);
       }
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
 
@@ -235,6 +242,28 @@ function Home() {
           </div>
         </div>
       </div>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <CircularProgress
+            style={{ color: "#b92f7bff" }}
+            size={60}
+            thickness={3}
+          />
+        </div>
+      )}
     </>
   );
 }
